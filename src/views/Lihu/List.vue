@@ -43,6 +43,8 @@
       <v-card>
         <v-card-title class="indigo darken-2">
           蠡湖家园
+          <v-spacer></v-spacer>
+          <v-btn text icon @click.stop="refresh"><v-icon>refresh</v-icon></v-btn>
         </v-card-title>
         <v-card-text class="px-0">
           <v-data-table :headers="headers" :items="filterData" :search="filter.text" :items-per-page="10">
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 
 export default {
@@ -142,6 +144,10 @@ export default {
     ...mapActions({
       showEdit: 'lihu/showEdit',
       showDetails: 'lihu/showDetails'
+    }),
+
+    ...mapMutations({
+      refresh: 'lihu/refresh'
     }),
 
     async loadRooms() {

@@ -43,6 +43,8 @@
       <v-card>
         <v-card-title class="pink darken-4">
           青教公寓
+          <v-spacer></v-spacer>
+          <v-btn text icon @click.stop="refresh"><v-icon>refresh</v-icon></v-btn>
         </v-card-title>
         <v-card-text class="px-0">
           <v-data-table :headers="headers" :items="filterData" :search="filter.text" :items-per-page="10">
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 
 export default {
@@ -142,6 +144,10 @@ export default {
     ...mapActions({
       showEdit: 'young/showEdit',
       showDetails: 'young/showDetails'
+    }),
+
+    ...mapMutations({
+      refresh: 'young/refresh'
     }),
 
     async loadRooms() {

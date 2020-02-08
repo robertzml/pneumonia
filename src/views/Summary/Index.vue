@@ -9,7 +9,7 @@
           <template v-slot:default="props">
             <v-row>
               <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
-                <v-card>
+                <v-card :elevation="16" hover>
                   <v-card-title class="subheading font-weight-bold">{{ item.name }}</v-card-title>
 
                   <v-divider></v-divider>
@@ -62,7 +62,18 @@
 
                     <v-divider></v-divider>
                     <v-list-item>
-                      <v-list-item-content class="font-weight-bold light-blue--text text--darken-4">合计:</v-list-item-content>
+                      <v-list-item-content>当前蠡湖家园户数:</v-list-item-content>
+                      <v-list-item-content class="align-end">{{ item.lihu }}</v-list-item-content>
+                    </v-list-item>
+
+                    <v-list-item>
+                      <v-list-item-content>当前青教公寓户数:</v-list-item-content>
+                      <v-list-item-content class="align-end">{{ item.young }}</v-list-item-content>
+                    </v-list-item>
+
+                    <v-divider></v-divider>
+                    <v-list-item>
+                      <v-list-item-content class="font-weight-bold light-blue--text text--darken-4">校内登记房间合计:</v-list-item-content>
                       <v-list-item-content class="align-end font-weight-bold light-blue--text text--darken-4">{{ item.total }}</v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -108,6 +119,9 @@ export default {
         sum.six = base.filter(r => r.category == 6).length
         sum.seven = base.filter(r => r.category == 7).length
         sum.eight = base.filter(r => r.category == 8).length
+
+        sum.lihu = base.filter(r => r.position == '蠡湖家园' && r.room_type == 1).length
+        sum.young = base.filter(r => r.position == '青教' && r.room_type == 2).length
 
         sum.total = base.length
         this.summaryItem.push(sum)

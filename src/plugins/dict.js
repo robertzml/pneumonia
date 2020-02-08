@@ -26,6 +26,7 @@ export default {
   ],
 
   staffType: [
+    { text: '未知', value: 0 },
     { text: '事业编制', value: 1 },
     { text: '人事代理', value: 2 },
     { text: '退休职工', value: 3 },
