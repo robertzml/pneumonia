@@ -2,7 +2,7 @@
   <v-row dense>
     <v-col cols="12">
       <v-card>
-        <v-card-title class="deep-purple darken-3">
+        <v-card-title class="purple darken-4">
           住户信息
         </v-card-title>
         <v-divider></v-divider>
@@ -61,24 +61,24 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 
 export default {
-  name: 'LihuDetails',
+  name: 'YoungDetails',
   data: () => ({
     roomInfo: {}
   }),
   computed: {
     ...mapState({
       departmentList: state => state.departmentList,
-      id: state => state.lihu.roomId,
-      refreshEvent: state => state.lihu.refreshEvent
+      id: state => state.young.roomId,
+      refreshEvent: state => state.young.refreshEvent
     })
   },
   methods: {
     ...mapActions({
-      showList: 'lihu/showList'
+      showList: 'young/showList'
     }),
 
     ...mapMutations({
-      refresh: 'lihu/refresh'
+      refresh: 'young/refresh'
     }),
 
     async loadInfo() {

@@ -47,5 +47,14 @@ export default {
     } else {
       return ''
     }
+  },
+
+  staffType: type => {
+    let ct = dict.staffType.find(r => r.value == type)
+    if (ct != undefined) {
+      return ct.text
+    } else {
+      return ''
+    }
   }
 }

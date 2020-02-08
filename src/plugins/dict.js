@@ -23,5 +23,13 @@ export default {
     { text: '疫区未归人员', value: 6 },
     { text: '其它省市未归人员', value: 7 },
     { text: '未联系上', value: 8 }
+  ],
+
+  staffType: [
+    { text: '事业编制', value: 1 },
+    { text: '人事代理', value: 2 },
+    { text: '退休职工', value: 3 },
+    { text: '外聘员工', value: 4 },
+    { text: '统招博士后', value: 5 }
   ]
 }

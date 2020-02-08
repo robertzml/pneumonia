@@ -2,7 +2,7 @@
   <v-row dense>
     <v-col cols="12">
       <v-card>
-        <v-card-title class="lime darken-3">
+        <v-card-title class="yellow darken-3">
           编辑信息
         </v-card-title>
         <v-divider></v-divider>
@@ -50,9 +50,6 @@
                 <v-select :items="$dict.callType" label="联系情况*" v-model="roomInfo.called"></v-select>
               </v-col>
               <v-col cols="12" md="3" sm="6">
-                <v-text-field label="工号" v-model="roomInfo.staff_number"></v-text-field>
-              </v-col>
-              <v-col cols="12" md="3" sm="6">
                 <v-select :items="$dict.staffType" label="人员性质*" v-model="roomInfo.staff_type"></v-select>
               </v-col>
               <v-col cols="12" md="12" sm="12">
@@ -77,7 +74,7 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 
 export default {
-  name: 'LihuEdit',
+  name: 'YoungEdit',
   data: () => ({
     valid: true,
     loading: false,
@@ -88,17 +85,17 @@ export default {
   computed: {
     ...mapState({
       departmentList: state => state.departmentList,
-      id: state => state.lihu.roomId,
-      refreshEvent: state => state.lihu.refreshEvent
+      id: state => state.young.roomId,
+      refreshEvent: state => state.young.refreshEvent
     })
   },
   methods: {
     ...mapActions({
-      showList: 'lihu/showList'
+      showList: 'young/showList'
     }),
 
     ...mapMutations({
-      refresh: 'lihu/refresh'
+      refresh: 'young/refresh'
     }),
 
     async loadInfo() {

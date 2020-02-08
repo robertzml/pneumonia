@@ -24,6 +24,10 @@ const filters = Vue => {
   Vue.filter('category', function(val) {
     return util.category(val)
   })
+
+  Vue.filter('staffType', function(val) {
+    return util.staffType(val)
+  })
 }
 
 export default filters
