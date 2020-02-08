@@ -1,56 +1,65 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" app clipped>
+      <navigation-bar></navigation-bar>
+    </v-navigation-drawer>
+    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app dense color="blue darken-3">
+      <v-toolbar-title style="width: 300px" class="ml-0 pl-0">
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <span class="hidden-sm-and-down">校内居住人员情况</span>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" @click.stop="logout">
+            <v-icon>exit_to_app</v-icon>
+          </v-btn>
+        </template>
+        <span>退出系统</span>
+      </v-tooltip>
     </v-app-bar>
 
     <v-content>
-      <HelloWorld />
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
     </v-content>
+
+    <v-snackbar v-model="alertMessage.display" :color="alertMessage.color" :timeout="5000" right top>
+      {{ alertMessage.text }}
+      <v-btn color="pink" small text icon @click="alertClose">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+import NavigationBar from '@/components/NavigationBar'
 
 export default {
-  name: "App",
-
+  name: 'App',
   components: {
-    HelloWorld
+    NavigationBar
   },
-
   data: () => ({
-    //
-  })
-};
+    drawer: true
+  }),
+  computed: {
+    ...mapGetters(['isLogin', 'userInfo', 'alertMessage'])
+  },
+  methods: {
+    ...mapActions(['initDict']),
+    ...mapMutations(['getToken', 'alertClose']),
+    logout() {
+      // this.$store.dispatch('logout')
+      this.$router.push({ name: 'login' })
+    }
+  },
+  mounted: function() {
+    // this.getToken()
+    // this.initDict()
+  }
+}
 </script>
