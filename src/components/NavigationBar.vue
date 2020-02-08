@@ -20,6 +20,16 @@
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+    <v-list-item :to="{ name: 'summary' }">
+      <v-list-item-action>
+        <v-icon>bar_chart</v-icon>
+      </v-list-item-action>
+      <v-list-item-content>
+        <v-list-item-title>
+          分类汇总
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
   </v-list>
 </template>
 
