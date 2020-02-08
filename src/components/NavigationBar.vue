@@ -1,6 +1,9 @@
 <template>
   <v-list dense>
     <v-list-item :to="{ name: 'lihu' }">
+      <v-list-item-action>
+        <v-icon>contacts</v-icon>
+      </v-list-item-action>
       <v-list-item-content>
         <v-list-item-title>
           蠡湖家园
@@ -8,6 +11,9 @@
       </v-list-item-content>
     </v-list-item>
     <v-list-item :to="{ name: 'young' }">
+      <v-list-item-action>
+        <v-icon>domain</v-icon>
+      </v-list-item-action>
       <v-list-item-content>
         <v-list-item-title>
           青教公寓

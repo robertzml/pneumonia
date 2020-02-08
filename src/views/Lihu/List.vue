@@ -22,6 +22,18 @@
             <v-col cols="12" md="4" sm="6">
               <v-text-field v-model="filter.text" append-icon="search" label="搜索" clearable single-line hide-details> </v-text-field>
             </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-select :items="$dict.category" label="住户分类" multiple clearable v-model="filter.category" hide-details></v-select>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-select :items="$dict.callType" label="联系情况" multiple clearable v-model="filter.called" hide-details></v-select>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-checkbox v-model="filter.hr_check" label="部门需核对" hide-details></v-checkbox>
+            </v-col>
           </v-row>
         </v-card-text>
       </v-card>
@@ -33,7 +45,7 @@
           蠡湖家园
         </v-card-title>
         <v-card-text class="px-0">
-          <v-data-table :headers="headers" :items="roomList" :search="filter.text" :items-per-page="10">
+          <v-data-table :headers="headers" :items="filterData" :search="filter.text" :items-per-page="10">
             <template v-slot:item.category="{ item }">
               {{ item.category | category }}
             </template>
@@ -67,7 +79,10 @@ export default {
     search: '',
     timeMenu: false,
     filter: {
+      hr_check: false,
       department: '',
+      category: [],
+      called: [],
       time: null,
       text: ''
     },
@@ -91,7 +106,32 @@ export default {
     ...mapState({
       departmentList: state => state.departmentList,
       refreshEvent: state => state.lihu.refreshEvent
-    })
+    }),
+    filterData: function() {
+      let temp = this.roomList
+
+      if (this.filter.hr_check) {
+        temp = temp.filter(r => r.hr_check == 0)
+      }
+
+      if (this.filter.department.length > 0) {
+        temp = temp.filter(r => this.filter.department.includes(r.department))
+      }
+
+      if (this.filter.category.length > 0) {
+        temp = temp.filter(r => this.filter.category.includes(r.category))
+      }
+
+      if (this.filter.called.length > 0) {
+        temp = temp.filter(r => this.filter.called.includes(r.called))
+      }
+
+      if (this.filter.time) {
+        temp = temp.filter(r => r.return_date == this.filter.time)
+      }
+
+      return temp
+    }
   },
   watch: {
     refreshEvent: function() {

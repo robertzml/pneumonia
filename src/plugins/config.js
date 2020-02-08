@@ -1,6 +1,6 @@
 const config = {
-  baseURL: 'http://localhost:5000/'
-  // baseURL: 'http://192.168.16.245:8000/api'
+  // baseURL: 'http://localhost:5000/'
+  baseURL: 'http://122.51.145.129:5032/'
 }
 
 export default config

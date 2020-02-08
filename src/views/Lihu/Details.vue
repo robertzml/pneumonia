@@ -36,6 +36,9 @@
               <v-col cols="12" md="3" sm="6">
                 <v-text-field label="联系情况" v-model="roomInfo.called" readonly></v-text-field>
               </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="工号" v-model="roomInfo.staff_number" readonly></v-text-field>
+              </v-col>
               <v-col cols="12" md="6" sm="6">
                 <v-text-field label="备注" v-model="roomInfo.remark" readonly></v-text-field>
               </v-col>

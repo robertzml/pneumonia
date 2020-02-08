@@ -49,6 +49,9 @@
               <v-col cols="12" md="3" sm="6">
                 <v-select :items="$dict.callType" label="联系情况*" v-model="roomInfo.called"></v-select>
               </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="工号" v-model="roomInfo.staff_number"></v-text-field>
+              </v-col>
               <v-col cols="12" md="6" sm="6">
                 <v-text-field label="备注" v-model="roomInfo.remark"></v-text-field>
               </v-col>
