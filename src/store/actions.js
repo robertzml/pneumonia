@@ -28,5 +28,11 @@ export default {
     axios._get({ url: '/utility/getEntityStatus' }).then(res => {
       commit('entityStatus', res.data)
     })
+  },
+
+  initDepartment({ commit }) {
+    axios._get({ url: '/dep' }).then(res => {
+      commit('setDepartment', res.data)
+    })
   }
 }

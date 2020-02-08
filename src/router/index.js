@@ -21,7 +21,7 @@ const routes = [
   {
     path: '/lihu',
     name: 'lihu',
-    component: () => import('@/views/Lihu.vue')
+    component: () => import('@/views/Lihu/Index.vue')
   },
   {
     path: '/young',

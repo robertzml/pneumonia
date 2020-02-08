@@ -5,16 +5,16 @@ export default {
 
   async list() {
     const res = await axios._get({ url: '/all' })
-    return res
+    return res.data
   },
 
   async get(id) {
     const res = await axios._get({ url: '/room', params: { id: id } })
-    return res
+    return res.data[0]
   },
 
   async update(entity) {
-    const res = await axios._post({ url: '/cargo/update', data: entity })
+    const res = await axios._post({ url: '/update', data: entity })
     return res.data
   }
 }

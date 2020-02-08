@@ -11,7 +11,7 @@
       <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" @click.stop="logout">
+          <v-btn icon v-on="on" @click.stop="toHome">
             <v-icon>exit_to_app</v-icon>
           </v-btn>
         </template>
@@ -47,19 +47,19 @@ export default {
     drawer: true
   }),
   computed: {
-    ...mapGetters(['isLogin', 'userInfo', 'alertMessage'])
+    ...mapGetters(['departmentList', 'userInfo', 'alertMessage'])
   },
   methods: {
-    ...mapActions(['initDict']),
+    ...mapActions(['initDepartment']),
     ...mapMutations(['getToken', 'alertClose']),
-    logout() {
+    toHome() {
       // this.$store.dispatch('logout')
-      this.$router.push({ name: 'login' })
+      this.$router.push({ name: 'Home' })
     }
   },
   mounted: function() {
     // this.getToken()
-    // this.initDict()
+    this.initDepartment()
   }
 }
 </script>

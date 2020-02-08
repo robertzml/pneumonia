@@ -46,7 +46,7 @@ export default {
     state.alertMessage.display = false
   },
 
-  entityStatus: (state, data) => {
-    state.entityStatus = data
+  setDepartment: (state, payload) => {
+    state.departmentList = payload.map(r => r.name)
   }
 }

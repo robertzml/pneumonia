@@ -12,12 +12,7 @@ export default {
     return state.alertMessage
   },
 
-  entityStatus: state => val => {
-    let es = state.entityStatus.find(r => r.value == val)
-    if (es != undefined) {
-      return es.text
-    } else {
-      return ''
-    }
+  departmentList: state => {
+    return state.departmentList
   }
 }
