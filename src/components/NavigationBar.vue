@@ -30,6 +30,16 @@
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+    <v-list-item :to="{ name: 'record' }">
+      <v-list-item-action>
+        <v-icon>gavel</v-icon>
+      </v-list-item-action>
+      <v-list-item-content>
+        <v-list-item-title>
+          住户日志
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
   </v-list>
 </template>
 

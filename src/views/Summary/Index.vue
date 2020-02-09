@@ -7,83 +7,98 @@
         <v-btn small text @click.stop="exportDetails">导出部门明细</v-btn>
       </v-card-title>
       <v-card-text>
-        <v-data-iterator :items="summaryItem" :disable-pagination="true" hide-default-footer>
-          <template v-slot:default="props">
-            <v-row>
-              <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
-                <v-card :elevation="16" hover>
-                  <v-card-title class="subheading font-weight-bold">{{ item.name }}</v-card-title>
+        <v-tabs v-model="tab">
+          <v-tab>卡片</v-tab>
+          <v-tab>表格</v-tab>
+        </v-tabs>
 
-                  <v-divider></v-divider>
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <v-data-iterator :items="summaryItem" :disable-pagination="true" hide-default-footer>
+              <template v-slot:default="props">
+                <v-row>
+                  <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
+                    <v-card :elevation="16" hover>
+                      <v-card-title class="subheading font-weight-bold">{{ item.name }}</v-card-title>
 
-                  <v-list dense>
-                    <v-list-item>
-                      <v-list-item-content>未知:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.zero }}</v-list-item-content>
-                    </v-list-item>
+                      <v-divider></v-divider>
 
-                    <v-list-item>
-                      <v-list-item-content>正常:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.one }}</v-list-item-content>
-                    </v-list-item>
+                      <v-list dense>
+                        <v-list-item>
+                          <v-list-item-content>未知:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.zero }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>房间空关:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.two }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>正常:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.one }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content class="red--text">医学观察人员:</v-list-item-content>
-                      <v-list-item-content class="align-end red--text">{{ item.three }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>房间空关:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.two }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content class="red--text">居家观察人员:</v-list-item-content>
-                      <v-list-item-content class="align-end red--text">{{ item.four }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content class="red--text">医学观察人员:</v-list-item-content>
+                          <v-list-item-content class="align-end red--text">{{ item.three }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>已过观察期人员:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.five }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content class="red--text">居家观察人员:</v-list-item-content>
+                          <v-list-item-content class="align-end red--text">{{ item.four }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>疫区未归人员:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.six }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>已过观察期人员:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.five }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>其它省市未归人员:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.seven }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>疫区未归人员:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.six }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>未联系上:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.eight }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>其它省市未归人员:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.seven }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-divider></v-divider>
-                    <v-list-item>
-                      <v-list-item-content>当前蠡湖家园户数:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.lihu }}</v-list-item-content>
-                    </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>未联系上:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.eight }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-content>当前青教公寓户数:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.young }}</v-list-item-content>
-                    </v-list-item>
+                        <v-divider></v-divider>
+                        <v-list-item>
+                          <v-list-item-content>当前蠡湖家园户数:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.lihu }}</v-list-item-content>
+                        </v-list-item>
 
-                    <v-divider></v-divider>
-                    <v-list-item>
-                      <v-list-item-content class="font-weight-bold light-blue--text text--darken-4">校内登记房间合计:</v-list-item-content>
-                      <v-list-item-content class="align-end font-weight-bold light-blue--text text--darken-4">{{ item.total }}</v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-col>
-            </v-row>
-          </template>
-        </v-data-iterator>
+                        <v-list-item>
+                          <v-list-item-content>当前青教公寓户数:</v-list-item-content>
+                          <v-list-item-content class="align-end">{{ item.young }}</v-list-item-content>
+                        </v-list-item>
+
+                        <v-divider></v-divider>
+                        <v-list-item>
+                          <v-list-item-content class="font-weight-bold light-blue--text text--darken-4">校内登记房间合计:</v-list-item-content>
+                          <v-list-item-content class="align-end font-weight-bold light-blue--text text--darken-4">{{
+                            item.total
+                          }}</v-list-item-content>
+                        </v-list-item>
+                      </v-list>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </template>
+            </v-data-iterator>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-data-table :headers="headers" :items="summaryItem" :items-per-page="10"> </v-data-table>
+          </v-tab-item>
+        </v-tabs-items>
       </v-card-text>
     </v-card>
   </v-sheet>
@@ -101,8 +116,24 @@ const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.
 export default {
   name: 'SummaryIndex',
   data: () => ({
+    tab: null,
     summaryItem: [],
-    roomList: []
+    roomList: [],
+    headers: [
+      { text: '部门', value: 'name' },
+      { text: '未知', value: 'zero' },
+      { text: '正常', value: 'one' },
+      { text: '房间空关', value: 'two' },
+      { text: '医学观察人员', value: 'three' },
+      { text: '居家观察人员', value: 'four' },
+      { text: '已过观察期人员', value: 'five' },
+      { text: '疫区未归人员', value: 'six' },
+      { text: '其它省市未归人员', value: 'seven' },
+      { text: '未联系上', value: 'eight' },
+      { text: '当前蠡湖家园户数', value: 'lihu' },
+      { text: '当前青教公寓户数', value: 'young' },
+      { text: '校内登记房间合计', value: 'total' }
+    ]
   }),
   computed: {
     ...mapState({
