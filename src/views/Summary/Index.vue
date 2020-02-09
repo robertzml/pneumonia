@@ -196,39 +196,42 @@ export default {
         sheet.addRow([dep + '校内居住情况'])
         sheet.mergeCells('A1:H1')
 
-        var row = sheet.getRow(0)
-        row.height = 18
-
-        sheet.eachRow(function(row) {
-          row.eachCell(function(cell) {
-            cell.border = {
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              bottom: { style: 'thin' },
-              right: { style: 'thin' }
-            }
-            cell.alignment = { vertical: 'middle', horizontal: 'center' }
-            cell.font = {
-              size: 14,
-              bold: true
-            }
-          })
+        let title = sheet.getRow(1)
+        title.height = 18
+        title.eachCell(function(cell) {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          }
+          cell.alignment = { vertical: 'middle', horizontal: 'center' }
+          cell.font = {
+            size: 14,
+            bold: true
+          }
         })
 
-        row.commit()
+        let header = sheet.getRow(2)
+        header.values = ['校内住所', '门牌号', '住户', '部门', '电话号码', '分类', '联系情况', '当前位置']
+        header.eachCell(function(cell) {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' }
+          cell.font = {
+            bold: true
+          }
+        })
 
         sheet.columns = [
-          { header: '校内住所', key: 'roomType', width: 15 },
-          { header: '门牌号', key: 'number', width: 10 },
-          { header: '住户', key: 'inhabitant', width: 15 },
-          { header: '部门', key: 'department', width: 25 },
-          { header: '电话号码', key: 'telephone', width: 15 },
-          { header: '分类', key: 'category', width: 20 },
-          { header: '联系情况', key: 'called', width: 20 },
-          { header: '当前位置', key: 'position', width: 20 }
+          { key: 'roomType', width: 15 },
+          { key: 'number', width: 10 },
+          { key: 'inhabitant', width: 15 },
+          { key: 'department', width: 25 },
+          { key: 'telephone', width: 15 },
+          { key: 'category', width: 20 },
+          { key: 'called', width: 20 },
+          { key: 'position', width: 20 }
         ]
 
-        let mapList = []
         this.roomList
           .filter(r => r.department == dep)
           .forEach(item => {
@@ -242,45 +245,22 @@ export default {
               called: this.$util.callType(item.called),
               position: item.position
             }
-            mapList.push(info)
+
+            sheet.addRow(info)
           })
 
-        // Add an array of rows
-        sheet.addRows(mapList)
-
-        /*
-        // Add column headers and define column keys and widths
-        sheet.columns = [
-          { header: '校内住所', key: 'roomType', width: 15, outlineLevel: 1 },
-          { header: '门牌号', key: 'number', width: 10, outlineLevel: 1 },
-          { header: '住户', key: 'inhabitant', width: 15, outlineLevel: 1 },
-          { header: '部门', key: 'department', width: 25, outlineLevel: 1 },
-          { header: '电话号码', key: 'telephone', width: 15, outlineLevel: 1 },
-          { header: '分类', key: 'category', width: 20, outlineLevel: 1 },
-          { header: '联系情况', key: 'called', width: 20, outlineLevel: 1 },
-          { header: '当前位置', key: 'position', width: 20, outlineLevel: 1 }
-        ]
-
-        let mapList = []
-        this.roomList
-          .filter(r => r.department == dep)
-          .forEach(item => {
-            let info = {
-              roomType: this.$util.roomType(item.room_type),
-              number: item.number,
-              inhabitant: item.inhabitant,
-              department: item.department,
-              telephone: item.telephone,
-              category: this.$util.category(item.category),
-              called: this.$util.callType(item.called),
-              position: item.position
-            }
-            mapList.push(info)
-          })
-
-        // Add an array of rows
-        sheet.addRows(mapList)
-        */
+        sheet.eachRow(function(row, rowNumber) {
+          if (rowNumber > 1) {
+            row.eachCell(function(cell) {
+              cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+              }
+            })
+          }
+        })
       })
 
       workbook.xlsx.writeBuffer().then(data => {
