@@ -96,7 +96,7 @@
           </v-tab-item>
 
           <v-tab-item>
-            <v-data-table :headers="headers" :items="summaryItem" :items-per-page="10"> </v-data-table>
+            <v-data-table class="mt-2" :headers="headers" :items="summaryItem" :items-per-page="10"> </v-data-table>
           </v-tab-item>
         </v-tabs-items>
       </v-card-text>

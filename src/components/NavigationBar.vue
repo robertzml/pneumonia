@@ -30,6 +30,16 @@
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+    <v-list-item :to="{ name: 'event' }">
+      <v-list-item-action>
+        <v-icon>event</v-icon>
+      </v-list-item-action>
+      <v-list-item-content>
+        <v-list-item-title>
+          学校日报
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
     <v-list-item :to="{ name: 'record' }">
       <v-list-item-action>
         <v-icon>gavel</v-icon>

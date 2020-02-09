@@ -34,6 +34,11 @@ const routes = [
     component: () => import('@/views/Summary/Index.vue')
   },
   {
+    path: '/event',
+    name: 'event',
+    component: () => import('@/views/Event/Index.vue')
+  },
+  {
     path: '/record',
     name: 'record',
     component: () => import('@/views/Record/List.vue')
