@@ -3,6 +3,8 @@
     <v-card>
       <v-card-title class="deep-orange darken-2">
         分部门汇总
+        <v-spacer></v-spacer>
+        <v-btn small text @click.stop="exportDetails">导出部门明细</v-btn>
       </v-card-title>
       <v-card-text>
         <v-data-iterator :items="summaryItem" :disable-pagination="true" hide-default-footer>
@@ -89,12 +91,15 @@
 
 <script>
 import { mapState } from 'vuex'
+import XLSX from 'xlsx'
 import room from '@/controllers/room'
 
 export default {
   name: 'SummaryIndex',
   data: () => ({
-    summaryItem: []
+    summaryItem: [],
+    roomList: [],
+    mapList: []
   }),
   computed: {
     ...mapState({
@@ -103,10 +108,10 @@ export default {
   },
   methods: {
     async makeSummary() {
-      let rooms = await room.list()
+      this.roomList = await room.list()
 
       this.departmentList.forEach(item => {
-        let base = rooms.filter(r => r.department == item)
+        let base = this.roomList.filter(r => r.department == item)
 
         let sum = {}
         sum.name = item
@@ -126,6 +131,15 @@ export default {
         sum.total = base.length
         this.summaryItem.push(sum)
       })
+    },
+
+    exportDetails() {
+      this.mapList = this.roomList.filter(r => r.department == '保卫处').map(r => [r.number, r.inhabitant, r.department])
+      this.mapList.unshift(['门牌号', '住户', '部门'])
+      console.log(this.mapList)
+
+      let sheet = XLSX.utils.aoa_to_sheet(this.mapList)
+      this.$util.openDownloadDialog(this.$util.sheet2blob(sheet), '保卫处.xlsx')
     }
   },
   mounted: function() {
