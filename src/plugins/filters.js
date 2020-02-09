@@ -32,6 +32,10 @@ const filters = Vue => {
   Vue.filter('roomType', function(val) {
     return util.roomType(val)
   })
+
+  Vue.filter('showReside', function(val) {
+    return util.showReside(val)
+  })
 }
 
 export default filters

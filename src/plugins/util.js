@@ -67,5 +67,13 @@ export default {
     } else {
       return ''
     }
+  },
+
+  showReside: val => {
+    if (val == -1) {
+      return ''
+    } else {
+      return val
+    }
   }
 }

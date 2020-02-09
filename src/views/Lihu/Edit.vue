@@ -55,6 +55,9 @@
               <v-col cols="12" md="3" sm="6">
                 <v-select :items="$dict.staffType" label="人员性质*" v-model="roomInfo.staff_type"></v-select>
               </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="居住人数" v-model="roomInfo.reside" :rules="resideRules" hint="-1表示未知" persistent-hint></v-text-field>
+              </v-col>
               <v-col cols="12" md="12" sm="12">
                 <v-text-field label="备注" v-model="roomInfo.remark"></v-text-field>
               </v-col>
@@ -83,6 +86,7 @@ export default {
     loading: false,
     timeMenu: false,
     departmentRules: [v => !!v || '请选择部门'],
+    resideRules: [v => (v != null && /^(-|\+)?\d+$/.test(v)) || '请输入数字'],
     roomInfo: {}
   }),
   computed: {

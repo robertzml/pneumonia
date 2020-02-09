@@ -41,6 +41,9 @@
             <v-col cols="12" md="3" sm="6">
               <v-text-field label="人员性质" :value="$util.staffType(roomInfo.staff_type)" readonly></v-text-field>
             </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-text-field label="居住人数" :value="$util.showReside(roomInfo.reside)" readonly></v-text-field>
+            </v-col>
             <v-col cols="12" md="12" sm="12">
               <v-text-field label="备注" v-model="roomInfo.remark" readonly></v-text-field>
             </v-col>

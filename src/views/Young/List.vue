@@ -54,6 +54,9 @@
             <template v-slot:item.called="{ item }">
               {{ item.called | callType }}
             </template>
+            <template v-slot:item.reside="{ item }">
+              {{ item.reside | showReside }}
+            </template>
             <template v-slot:item.action="{ item }">
               <v-btn small color="primary" @click="viewItem(item)">
                 <v-icon left dark>pageview</v-icon>
@@ -97,6 +100,7 @@ export default {
       { text: '当前位置', value: 'position' },
       { text: '返回日期', value: 'return_date' },
       { text: '返回城市', value: 'return_city' },
+      { text: '居住人数', value: 'reside' },
       { text: '联系情况', value: 'called' },
       { text: '操作', value: 'action', sortable: false }
     ],
