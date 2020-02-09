@@ -91,15 +91,18 @@
 
 <script>
 import { mapState } from 'vuex'
-import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
+import Excel from 'exceljs'
+//import ExcelJS from 'exceljs/dist/es5/exceljs.browser'
 import room from '@/controllers/room'
+
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
 
 export default {
   name: 'SummaryIndex',
   data: () => ({
     summaryItem: [],
-    roomList: [],
-    mapList: []
+    roomList: []
   }),
   computed: {
     ...mapState({
@@ -133,13 +136,157 @@ export default {
       })
     },
 
-    exportDetails() {
-      this.mapList = this.roomList.filter(r => r.department == '保卫处').map(r => [r.number, r.inhabitant, r.department])
-      this.mapList.unshift(['门牌号', '住户', '部门'])
-      console.log(this.mapList)
+    exportTable() {
+      let workbook = new Excel.Workbook()
 
-      let sheet = XLSX.utils.aoa_to_sheet(this.mapList)
-      this.$util.openDownloadDialog(this.$util.sheet2blob(sheet), '保卫处.xlsx')
+      this.departmentList.forEach(dep => {
+        let sheet = workbook.addWorksheet(dep)
+
+        let rows = []
+        this.roomList
+          .filter(r => r.department == dep)
+          .forEach(item => {
+            let info = [
+              this.$util.roomType(item.room_type),
+              item.number,
+              item.inhabitant,
+              item.department,
+              item.telephone,
+              this.$util.category(item.category),
+              this.$util.callType(item.called),
+              item.position
+            ]
+            rows.push(info)
+          })
+
+        sheet.addTable({
+          name: dep,
+          displayName: dep + '校内居住人员情况',
+          ref: 'A1',
+          headerRow: true,
+          style: {
+            theme: 'TableStyleDark3'
+          },
+          columns: [
+            { name: '校内住所', width: 140 },
+            { name: '门牌号', width: 100 },
+            { name: '住户', width: 100 },
+            { name: '部门', width: 180 },
+            { name: '电话号码', width: 100 },
+            { name: '分类', width: 150 },
+            { name: '联系情况', width: 100 },
+            { name: '当前位置', width: 100 }
+          ],
+          rows: rows
+        })
+      })
+
+      workbook.xlsx.writeBuffer().then(data => {
+        const blob = new Blob([data], { type: EXCEL_TYPE })
+        FileSaver.saveAs(blob, '分部门统计明细.xlsx')
+      })
+    },
+
+    exportDetails() {
+      let workbook = new Excel.Workbook()
+
+      this.departmentList.forEach(dep => {
+        let sheet = workbook.addWorksheet(dep)
+
+        sheet.addRow([dep + '校内居住情况'])
+        sheet.mergeCells('A1:H1')
+
+        var row = sheet.getRow(0)
+        row.height = 18
+
+        sheet.eachRow(function(row) {
+          row.eachCell(function(cell) {
+            cell.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'thin' }
+            }
+            cell.alignment = { vertical: 'middle', horizontal: 'center' }
+            cell.font = {
+              size: 14,
+              bold: true
+            }
+          })
+        })
+
+        row.commit()
+
+        sheet.columns = [
+          { header: '校内住所', key: 'roomType', width: 15 },
+          { header: '门牌号', key: 'number', width: 10 },
+          { header: '住户', key: 'inhabitant', width: 15 },
+          { header: '部门', key: 'department', width: 25 },
+          { header: '电话号码', key: 'telephone', width: 15 },
+          { header: '分类', key: 'category', width: 20 },
+          { header: '联系情况', key: 'called', width: 20 },
+          { header: '当前位置', key: 'position', width: 20 }
+        ]
+
+        let mapList = []
+        this.roomList
+          .filter(r => r.department == dep)
+          .forEach(item => {
+            let info = {
+              roomType: this.$util.roomType(item.room_type),
+              number: item.number,
+              inhabitant: item.inhabitant,
+              department: item.department,
+              telephone: item.telephone,
+              category: this.$util.category(item.category),
+              called: this.$util.callType(item.called),
+              position: item.position
+            }
+            mapList.push(info)
+          })
+
+        // Add an array of rows
+        sheet.addRows(mapList)
+
+        /*
+        // Add column headers and define column keys and widths
+        sheet.columns = [
+          { header: '校内住所', key: 'roomType', width: 15, outlineLevel: 1 },
+          { header: '门牌号', key: 'number', width: 10, outlineLevel: 1 },
+          { header: '住户', key: 'inhabitant', width: 15, outlineLevel: 1 },
+          { header: '部门', key: 'department', width: 25, outlineLevel: 1 },
+          { header: '电话号码', key: 'telephone', width: 15, outlineLevel: 1 },
+          { header: '分类', key: 'category', width: 20, outlineLevel: 1 },
+          { header: '联系情况', key: 'called', width: 20, outlineLevel: 1 },
+          { header: '当前位置', key: 'position', width: 20, outlineLevel: 1 }
+        ]
+
+        let mapList = []
+        this.roomList
+          .filter(r => r.department == dep)
+          .forEach(item => {
+            let info = {
+              roomType: this.$util.roomType(item.room_type),
+              number: item.number,
+              inhabitant: item.inhabitant,
+              department: item.department,
+              telephone: item.telephone,
+              category: this.$util.category(item.category),
+              called: this.$util.callType(item.called),
+              position: item.position
+            }
+            mapList.push(info)
+          })
+
+        // Add an array of rows
+        sheet.addRows(mapList)
+        */
+      })
+
+      workbook.xlsx.writeBuffer().then(data => {
+        const blob = new Blob([data], { type: EXCEL_TYPE })
+        FileSaver.saveAs(blob, '分部门统计明细.xlsx')
+      })
     }
   },
   mounted: function() {
