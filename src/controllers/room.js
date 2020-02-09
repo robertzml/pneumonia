@@ -16,5 +16,15 @@ export default {
   async update(entity) {
     const res = await axios._post({ url: '/update', data: entity })
     return res.data
+  },
+
+  async insertRecord(entity) {
+    const res = await axios._post({ url: '/insertRecord', data: entity })
+    return res.data
+  },
+
+  async loadRecords() {
+    const res = await axios._get({ url: '/records' })
+    return res.data
   }
 }

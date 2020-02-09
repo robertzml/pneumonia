@@ -28,6 +28,10 @@ const filters = Vue => {
   Vue.filter('staffType', function(val) {
     return util.staffType(val)
   })
+
+  Vue.filter('roomType', function(val) {
+    return util.roomType(val)
+  })
 }
 
 export default filters

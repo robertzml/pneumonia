@@ -49,21 +49,42 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="warning" @click="showCreateRecord">添加日志</v-btn>
           <v-btn color="success" @click="showList">返回</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
+
+    <v-col cols="12">
+      <v-card>
+        <v-subheader>用户日志</v-subheader>
+        <v-data-table :headers="headers" :items="recordItems" hide-default-footer disable-pagination> </v-data-table>
+      </v-card>
+    </v-col>
+
+    <record-create ref="recordMod" @close="loadRecords"></record-create>
   </v-row>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
+import RecordCreate from '../Record/Create'
 
 export default {
   name: 'YoungDetails',
+  components: {
+    RecordCreate
+  },
   data: () => ({
-    roomInfo: {}
+    roomInfo: {},
+    headers: [
+      { text: '房间号', value: 'number' },
+      { text: '住户', value: 'inhabitant' },
+      { text: '日期', value: 'record_date' },
+      { text: '信息', value: 'info' }
+    ],
+    recordItems: []
   }),
   computed: {
     ...mapState({
@@ -90,10 +111,24 @@ export default {
       } else {
         this.roomInfo = {}
       }
+    },
+
+    async loadRecords() {
+      if (this.id) {
+        let items = await room.loadRecords()
+        this.recordItems = items.filter(r => r.room_id == this.id)
+      } else {
+        this.recordItems = []
+      }
+    },
+
+    showCreateRecord() {
+      this.$refs.recordMod.init(this.roomInfo)
     }
   },
   activated: function() {
     this.loadInfo()
+    this.loadRecords()
   }
 }
 </script>
