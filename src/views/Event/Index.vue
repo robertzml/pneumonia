@@ -39,9 +39,6 @@
               hide-default-footer
               disable-pagination
             >
-              <template v-slot:item.room_type="{ item }">
-                {{ item.room_type | roomType }}
-              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -76,6 +73,9 @@
         <v-tabs-items v-model="tab">
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="total_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -89,6 +89,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="return_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -102,6 +105,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="return_today_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -115,6 +121,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="isolation_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -128,6 +137,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="isolation_today_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -141,6 +153,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="relief_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -154,6 +169,9 @@
           </v-tab-item>
           <v-tab-item>
             <v-data-table :headers="findHeaders" :items="relief_today_amount_list" :items-per-page="10">
+              <template v-slot:item.room_type="{ item }">
+                {{ item.room_type | roomType }}
+              </template>
               <template v-slot:item.category="{ item }">
                 {{ item.category | category }}
               </template>
@@ -198,6 +216,7 @@ export default {
     eventItems: [],
     roomList: [],
     findHeaders: [
+      { text: '住所', value: 'room_type' },
       { text: '门牌号', value: 'number' },
       { text: '住户', value: 'inhabitant' },
       { text: '部门', value: 'department' },
@@ -207,8 +226,7 @@ export default {
       { text: '返回日期', value: 'return_date' },
       { text: '返回城市', value: 'return_city' },
       { text: '居住人数', value: 'reside' },
-      { text: '联系情况', value: 'called' },
-      { text: '操作', value: 'action', sortable: false }
+      { text: '联系情况', value: 'called' }
     ],
     title: '',
     total_list: [],
@@ -262,12 +280,17 @@ export default {
         // console.log(sel)
         if (this.eventDate) {
           this.title = sel.category + ' - ' + this.eventDate
+
           if (sel.category == '蠡湖家园总户数') {
-            this.detailsLihu(this.eventDate)
+            this.detailsApartment('蠡湖家园', 1, this.eventDate)
           } else if (sel.category == '青教公寓总户数') {
-            this.detailsYoung(this.eventDate)
+            this.detailsApartment('青教', 2, this.eventDate)
           } else if (sel.category == '涉湖北户数') {
-            this.detailsHuBei(this.eventDate)
+            this.detailsFocus(/湖北/gi, this.eventDate)
+          } else if (sel.category == '涉温州户数') {
+            this.detailsFocus(/温州/gi, this.eventDate)
+          } else if (sel.category == '涉疫区户数') {
+            this.detailsFocus(/湖南|河南|浙江|安徽|广东/gi, this.eventDate)
           }
         }
       }
@@ -356,7 +379,7 @@ export default {
       let record = {}
       const current = val
 
-      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1)
+      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1 && (r.category == 3 || r.category == 5))
       record.category = title
       record.total = rooms.length
       record.return_amount = 0
@@ -432,17 +455,17 @@ export default {
       this.eventItems.push(record)
     },
 
-    // 蠡湖家园详细
-    detailsLihu(val) {
+    // 蠡湖家园，青教清单
+    detailsApartment(name, room_type, val) {
       const current = val
 
-      const rooms = this.roomList.filter(r => r.room_type == 1)
+      const rooms = this.roomList.filter(r => r.room_type == room_type)
       rooms.forEach(item => {
         // 总户数
         this.total_list.push(item)
 
         // 返校总数
-        if (item.position == '蠡湖家园') {
+        if (item.position == name) {
           if (item.return_date) {
             let rd = this.$moment(item.return_date)
             if (rd.isBefore(current) || rd.isSame(current)) {
@@ -456,7 +479,7 @@ export default {
 
       // 今日返校
       rooms
-        .filter(r => r.return_date == current && r.position == '蠡湖家园')
+        .filter(r => r.return_date == current && r.position == name)
         .forEach(item => {
           this.return_today_amount_list.push(item)
         })
@@ -492,71 +515,12 @@ export default {
         })
     },
 
-    // 青教详细
-    detailsYoung(val) {
+    // 重点地区清单
+    detailsFocus(pattern, val) {
       const current = val
 
-      const rooms = this.roomList.filter(r => r.room_type == 2)
-      rooms.forEach(item => {
-        // 总户数
-        this.total_list.push(item)
+      const rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1 && (r.category == 3 || r.category == 5))
 
-        // 返校总数
-        if (item.position == '青教') {
-          if (item.return_date) {
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              this.return_amount_list.push(item)
-            }
-          } else {
-            this.return_amount_list.push(item)
-          }
-        }
-      })
-
-      // 今日返校
-      rooms
-        .filter(r => r.return_date == current && r.position == '青教')
-        .forEach(item => {
-          this.return_today_amount_list.push(item)
-        })
-
-      rooms
-        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-        .forEach(item => {
-          // 累计隔离
-          let rd = this.$moment(item.return_date)
-          if (rd.isBefore(current) || rd.isSame(current)) {
-            if (rd.add(15, 'days').isAfter(current)) {
-              this.isolation_amount_list.push(item)
-            }
-          }
-
-          // 今日新增隔离
-          rd = this.$moment(item.return_date)
-          if (rd.isSame(current)) {
-            this.isolation_today_amount_list.push(item)
-          }
-
-          // 今日累计解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(14, 'days').isBefore(current)) {
-            this.relief_amount_list.push(item)
-          }
-
-          // 今日解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(15, 'days').isSame(current)) {
-            this.relief_today_amount_list.push(item)
-          }
-        })
-    },
-
-    // 湖北详细
-    detailsHuBei(val) {
-      const current = val
-
-      const rooms = this.roomList.filter(r => r.return_city && r.return_city.search(/湖北/gi) > -1)
       rooms.forEach(item => {
         // 总户数
         this.total_list.push(item)
@@ -572,44 +536,44 @@ export default {
             this.return_amount_list.push(item)
           }
         }
-
-        // 今日返校
-        rooms
-          .filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园'))
-          .forEach(item => {
-            this.return_today_amount_list.push(item)
-          })
-
-        rooms
-          .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-          .forEach(item => {
-            // 目前累计隔离
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              if (rd.add(15, 'days').isAfter(current)) {
-                this.isolation_amount_list.push(item)
-              }
-            }
-
-            // 今日新增隔离
-            rd = this.$moment(item.return_date)
-            if (rd.isSame(current)) {
-              this.isolation_today_amount_list.push(item)
-            }
-
-            // 累计解除
-            rd = this.$moment(item.return_date)
-            if (rd.add(14, 'days').isBefore(current)) {
-              this.relief_amount_list.push(item)
-            }
-
-            // 今日解除
-            rd = this.$moment(item.return_date)
-            if (rd.add(15, 'days').isSame(current)) {
-              this.relief_today_amount_list.push(item)
-            }
-          })
       })
+
+      // 今日返校
+      rooms
+        .filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园'))
+        .forEach(item => {
+          this.return_today_amount_list.push(item)
+        })
+
+      rooms
+        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
+        .forEach(item => {
+          // 目前累计隔离
+          let rd = this.$moment(item.return_date)
+          if (rd.isBefore(current) || rd.isSame(current)) {
+            if (rd.add(15, 'days').isAfter(current)) {
+              this.isolation_amount_list.push(item)
+            }
+          }
+
+          // 今日新增隔离
+          rd = this.$moment(item.return_date)
+          if (rd.isSame(current)) {
+            this.isolation_today_amount_list.push(item)
+          }
+
+          // 累计解除
+          rd = this.$moment(item.return_date)
+          if (rd.add(14, 'days').isBefore(current)) {
+            this.relief_amount_list.push(item)
+          }
+
+          // 今日解除
+          rd = this.$moment(item.return_date)
+          if (rd.add(15, 'days').isSame(current)) {
+            this.relief_today_amount_list.push(item)
+          }
+        })
     }
   },
   mounted: function() {
