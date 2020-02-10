@@ -229,17 +229,18 @@ export default {
       this.roomList = await room.list()
     },
 
-    selectDate(val) {
+    selectDate() {
       this.eventItems = []
-      // console.log('invoke' + val)
 
-      this.makeLihu(val)
-      this.makeYoung(val)
-      this.makeHuBei(val)
-      this.makeWenZhou(val)
-      this.makeAffect(val)
-
+      this.doMakes()
       this.calcDetails()
+    },
+
+    // 制作汇总
+    doMakes() {
+      console.log('do make ' + this.eventDate)
+      this.makeApartment('蠡湖家园总户数', '蠡湖家园', 1, this.eventDate)
+      this.makeApartment('青教公寓总户数', '青教', 2, this.eventDate)
     },
 
     // 计算详细
@@ -269,16 +270,16 @@ export default {
       }
     },
 
-    // 蠡湖家园统计
-    makeLihu(val) {
+    // 蠡湖家园，青教数据
+    makeApartment(title, name, room_type, val) {
       let record = {}
       const current = val
 
-      let rooms = this.roomList.filter(r => r.room_type == 1)
-      record.category = '蠡湖家园总户数'
+      let rooms = this.roomList.filter(r => r.room_type == room_type)
+      record.category = title
       record.total = rooms.length
-      record.return_amount = 0 //rooms.filter(r => r.position == '蠡湖家园').length
-      record.return_today_amount = rooms.filter(r => r.return_date == current && r.position == '蠡湖家园').length
+      record.return_amount = 0
+      record.return_today_amount = rooms.filter(r => r.return_date == current && r.position == name).length
       record.isolation_amount = 0
       record.isolation_reside = 0
       record.isolation_today_amount = 0
@@ -290,7 +291,7 @@ export default {
 
       // 返校总数
       rooms.forEach(item => {
-        if (item.position == '蠡湖家园') {
+        if (item.position == name) {
           if (item.return_date) {
             let rd = this.$moment(item.return_date)
             if (rd.isBefore(current) || rd.isSame(current)) {
@@ -405,83 +406,6 @@ export default {
             this.relief_today_amount_list.push(item)
           }
         })
-    },
-
-    // 青教统计
-    makeYoung(val) {
-      let record = {}
-      const current = val
-
-      let rooms = this.roomList.filter(r => r.room_type == 2)
-      record.category = '青教公寓总户数'
-      record.total = rooms.length
-      record.return_amount = 0 //rooms.filter(r => r.position == '青教').length
-      record.return_today_amount = rooms.filter(r => r.return_date == current && r.position == '青教').length
-      record.isolation_amount = 0
-      record.isolation_reside = 0
-      record.isolation_today_amount = 0
-      record.isolation_today_reside = 0
-      record.relief_amount = 0
-      record.relief_reside = 0
-      record.relief_today_amount = 0
-      record.relief_today_reside = 0
-
-      // 返校总数
-      rooms.forEach(item => {
-        if (item.position == '青教') {
-          if (item.return_date) {
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              record.return_amount += 1
-            }
-          } else {
-            record.return_amount += 1
-          }
-        }
-      })
-
-      rooms
-        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-        .forEach(item => {
-          // 目前累计隔离
-          let rd = this.$moment(item.return_date)
-          if (rd.isBefore(current) || rd.isSame(current)) {
-            if (rd.add(15, 'days').isAfter(current)) {
-              record.isolation_amount += 1
-              if (item.reside != -1) {
-                record.isolation_reside += item.reside
-              }
-            }
-          }
-
-          // 今日新增隔离
-          rd = this.$moment(item.return_date)
-          if (rd.isSame(current)) {
-            record.isolation_today_amount += 1
-            if (item.reside != -1) {
-              record.isolation_today_reside += item.reside
-            }
-          }
-
-          // 累计解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(14, 'days').isBefore(current)) {
-            record.relief_amount += 1
-            if (item.reside != -1) {
-              record.relief_reside += item.reside
-            }
-          }
-
-          // 今日解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(15, 'days').isSame(current)) {
-            record.relief_today_amount += 1
-            if (item.reside != -1) {
-              record.relief_today_reside += item.reside
-            }
-          }
-        })
-      this.eventItems.push(record)
     },
 
     // 青教详细
