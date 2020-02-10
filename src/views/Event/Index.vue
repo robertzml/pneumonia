@@ -241,6 +241,9 @@ export default {
       console.log('do make ' + this.eventDate)
       this.makeApartment('蠡湖家园总户数', '蠡湖家园', 1, this.eventDate)
       this.makeApartment('青教公寓总户数', '青教', 2, this.eventDate)
+      this.makeFocus('涉湖北户数', /湖北/gi, this.eventDate)
+      this.makeFocus('涉温州户数', /温州/gi, this.eventDate)
+      this.makeFocus('涉疫区户数', /湖南|河南|浙江|安徽|广东/gi, this.eventDate)
     },
 
     // 计算详细
@@ -327,6 +330,87 @@ export default {
           }
 
           // 今日累计解除
+          rd = this.$moment(item.return_date)
+          if (rd.add(14, 'days').isBefore(current)) {
+            record.relief_amount += 1
+            if (item.reside != -1) {
+              record.relief_reside += item.reside
+            }
+          }
+
+          // 今日解除
+          rd = this.$moment(item.return_date)
+          if (rd.add(15, 'days').isSame(current)) {
+            record.relief_today_amount += 1
+            if (item.reside != -1) {
+              record.relief_today_reside += item.reside
+            }
+          }
+        })
+
+      this.eventItems.push(record)
+    },
+
+    // 核心关注城市
+    makeFocus(title, pattern, val) {
+      let record = {}
+      const current = val
+
+      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1)
+      record.category = title
+      record.total = rooms.length
+      record.return_amount = 0
+      record.return_today_amount = 0
+      record.isolation_amount = 0
+      record.isolation_reside = 0
+      record.isolation_today_amount = 0
+      record.isolation_today_reside = 0
+      record.relief_amount = 0
+      record.relief_reside = 0
+      record.relief_today_amount = 0
+      record.relief_today_reside = 0
+
+      // 返校总数
+      rooms.forEach(item => {
+        if (item.position == '青教' || item.position == '蠡湖家园') {
+          if (item.return_date) {
+            let rd = this.$moment(item.return_date)
+            if (rd.isBefore(current) || rd.isSame(current)) {
+              record.return_amount += 1
+            }
+          } else {
+            record.return_amount += 1
+          }
+        }
+      })
+
+      // 今日返校
+      record.return_today_amount = rooms.filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园')).length
+
+      rooms
+        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
+        .forEach(item => {
+          // 目前累计隔离
+          let rd = this.$moment(item.return_date)
+          if (rd.isBefore(current) || rd.isSame(current)) {
+            if (rd.add(15, 'days').isAfter(current)) {
+              record.isolation_amount += 1
+              if (item.reside != -1) {
+                record.isolation_reside += item.reside
+              }
+            }
+          }
+
+          // 今日新增隔离
+          rd = this.$moment(item.return_date)
+          if (rd.isSame(current)) {
+            record.isolation_today_amount += 1
+            if (item.reside != -1) {
+              record.isolation_today_reside += item.reside
+            }
+          }
+
+          // 累计解除
           rd = this.$moment(item.return_date)
           if (rd.add(14, 'days').isBefore(current)) {
             record.relief_amount += 1
@@ -468,86 +552,6 @@ export default {
         })
     },
 
-    makeHuBei(val) {
-      let record = {}
-      const current = val
-
-      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(/湖北/gi) > -1)
-      record.category = '涉湖北户数'
-      record.total = rooms.length
-      record.return_amount = 0
-      record.return_today_amount = 0
-      record.isolation_amount = 0
-      record.isolation_reside = 0
-      record.isolation_today_amount = 0
-      record.isolation_today_reside = 0
-      record.relief_amount = 0
-      record.relief_reside = 0
-      record.relief_today_amount = 0
-      record.relief_today_reside = 0
-
-      // 返校总数
-      rooms.forEach(item => {
-        if (item.position == '青教' || item.position == '蠡湖家园') {
-          if (item.return_date) {
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              record.return_amount += 1
-            }
-          } else {
-            record.return_amount += 1
-          }
-        }
-      })
-
-      // 今日返校
-      record.return_today_amount = rooms.filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园')).length
-
-      rooms
-        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-        .forEach(item => {
-          // 目前累计隔离
-          let rd = this.$moment(item.return_date)
-          if (rd.isBefore(current) || rd.isSame(current)) {
-            if (rd.add(15, 'days').isAfter(current)) {
-              record.isolation_amount += 1
-              if (item.reside != -1) {
-                record.isolation_reside += item.reside
-              }
-            }
-          }
-
-          // 今日新增隔离
-          rd = this.$moment(item.return_date)
-          if (rd.isSame(current)) {
-            record.isolation_today_amount += 1
-            if (item.reside != -1) {
-              record.isolation_today_reside += item.reside
-            }
-          }
-
-          // 累计解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(14, 'days').isBefore(current)) {
-            record.relief_amount += 1
-            if (item.reside != -1) {
-              record.relief_reside += item.reside
-            }
-          }
-
-          // 今日解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(15, 'days').isSame(current)) {
-            record.relief_today_amount += 1
-            if (item.reside != -1) {
-              record.relief_today_reside += item.reside
-            }
-          }
-        })
-
-      this.eventItems.push(record)
-    },
-
     // 湖北详细
     detailsHuBei(val) {
       const current = val
@@ -606,167 +610,6 @@ export default {
             }
           })
       })
-    },
-
-    makeWenZhou(val) {
-      let record = {}
-      const current = val
-
-      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(/温州/gi) > -1)
-      record.category = '涉温州户数'
-      record.total = rooms.length
-      record.return_amount = 0
-      record.return_today_amount = 0
-      record.isolation_amount = 0
-      record.isolation_reside = 0
-      record.isolation_today_amount = 0
-      record.isolation_today_reside = 0
-      record.relief_amount = 0
-      record.relief_reside = 0
-      record.relief_today_amount = 0
-      record.relief_today_reside = 0
-
-      // 返校总数
-      rooms.forEach(item => {
-        if (item.position == '青教' || item.position == '蠡湖家园') {
-          if (item.return_date) {
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              record.return_amount += 1
-            }
-          } else {
-            record.return_amount += 1
-          }
-        }
-      })
-
-      // 今日返校
-      record.return_today_amount = rooms.filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园')).length
-
-      rooms
-        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-        .forEach(item => {
-          // 目前累计隔离
-          let rd = this.$moment(item.return_date)
-          if (rd.isBefore(current) || rd.isSame(current)) {
-            if (rd.add(15, 'days').isAfter(current)) {
-              record.isolation_amount += 1
-              if (item.reside != -1) {
-                record.isolation_reside += item.reside
-              }
-            }
-          }
-
-          // 今日新增隔离
-          rd = this.$moment(item.return_date)
-          if (rd.isSame(current)) {
-            record.isolation_today_amount += 1
-            if (item.reside != -1) {
-              record.isolation_today_reside += item.reside
-            }
-          }
-
-          // 累计解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(14, 'days').isBefore(current)) {
-            record.relief_amount += 1
-            if (item.reside != -1) {
-              record.relief_reside += item.reside
-            }
-          }
-
-          // 今日解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(15, 'days').isSame(current)) {
-            record.relief_today_amount += 1
-            if (item.reside != -1) {
-              record.relief_today_reside += item.reside
-            }
-          }
-        })
-
-      this.eventItems.push(record)
-    },
-
-    // 其它疫区
-    makeAffect(val) {
-      let record = {}
-      const current = val
-
-      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(/湖南|河南|浙江|安徽|广东/gi) > -1)
-      record.category = '涉疫区户数'
-      record.total = rooms.length
-      record.return_amount = 0
-      record.return_today_amount = 0
-      record.isolation_amount = 0
-      record.isolation_reside = 0
-      record.isolation_today_amount = 0
-      record.isolation_today_reside = 0
-      record.relief_amount = 0
-      record.relief_reside = 0
-      record.relief_today_amount = 0
-      record.relief_today_reside = 0
-
-      // 返校总数
-      rooms.forEach(item => {
-        if (item.position == '青教' || item.position == '蠡湖家园') {
-          if (item.return_date) {
-            let rd = this.$moment(item.return_date)
-            if (rd.isBefore(current) || rd.isSame(current)) {
-              record.return_amount += 1
-            }
-          } else {
-            record.return_amount += 1
-          }
-        }
-      })
-
-      // 今日返校
-      record.return_today_amount = rooms.filter(r => r.return_date == current && (r.position == '青教' || r.position == '蠡湖家园')).length
-
-      rooms
-        .filter(r => r.return_date && (r.category == 3 || r.category == 5))
-        .forEach(item => {
-          // 目前累计隔离
-          let rd = this.$moment(item.return_date)
-          if (rd.isBefore(current) || rd.isSame(current)) {
-            if (rd.add(15, 'days').isAfter(current)) {
-              record.isolation_amount += 1
-              if (item.reside != -1) {
-                record.isolation_reside += item.reside
-              }
-            }
-          }
-
-          // 今日新增隔离
-          rd = this.$moment(item.return_date)
-          if (rd.isSame(current)) {
-            record.isolation_today_amount += 1
-            if (item.reside != -1) {
-              record.isolation_today_reside += item.reside
-            }
-          }
-
-          // 累计解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(14, 'days').isBefore(current)) {
-            record.relief_amount += 1
-            if (item.reside != -1) {
-              record.relief_reside += item.reside
-            }
-          }
-
-          // 今日解除
-          rd = this.$moment(item.return_date)
-          if (rd.add(15, 'days').isSame(current)) {
-            record.relief_today_amount += 1
-            if (item.reside != -1) {
-              record.relief_today_reside += item.reside
-            }
-          }
-        })
-
-      this.eventItems.push(record)
     }
   },
   mounted: function() {
