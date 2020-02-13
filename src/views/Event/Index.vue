@@ -9,7 +9,7 @@
             <li>目前隔离户数:在医学观察或脱离观察期的住户中，计算返回日期还在日报日期的15天内.</li>
             <li>累计解除隔离户数:在医学观察或脱离观察期的住户中，返回日期已早于日报日期15天.</li>
             <li>
-              几个关键城市，首先筛选出返回城市包含了相应关键字，疫区包括(湖南、河南、安徽、浙江、广东)，即为总户数。
+              几个关键城市，首先筛选出返回城市包含了相应关键字，疫区包括(湖南、河南、安徽、浙江、广东)，且状态为在医学观察或脱离观察期，即为总户数。
               已返校户数判断当前位置是否在蠡湖家园或青教。 隔离相关数据在医学观察人员和解除观察人中筛选。
             </li>
           </ol>
@@ -262,6 +262,7 @@ export default {
       this.makeFocus('涉湖北户数', /湖北/gi, this.eventDate)
       this.makeFocus('涉温州户数', /温州/gi, this.eventDate)
       this.makeFocus('涉疫区户数', /湖南|河南|浙江|安徽|广东/gi, this.eventDate)
+      this.makeFocus('涉江西户数', /江西/gi, this.eventDate)
     },
 
     // 计算详细
@@ -291,6 +292,8 @@ export default {
             this.detailsFocus(/温州/gi, this.eventDate)
           } else if (sel.category == '涉疫区户数') {
             this.detailsFocus(/湖南|河南|浙江|安徽|广东/gi, this.eventDate)
+          } else if (sel.category == '涉江西户数') {
+            this.detailsFocus(/江西/gi, this.eventDate)
           }
         }
       }
