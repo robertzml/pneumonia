@@ -7,10 +7,7 @@ export default {
   logout: state => {
     state.user = {
       login: false,
-      id: '',
-      userName: '',
-      name: '',
-      userGroupId: ''
+      userName: ''
     }
     window.sessionStorage.removeItem('token')
   },

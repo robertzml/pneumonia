@@ -32,7 +32,7 @@
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-checkbox v-model="filter.hr_check" label="部门需核对" hide-details></v-checkbox>
+              <v-checkbox v-model="filter.is_check" label="是否非核对" hide-details></v-checkbox>
             </v-col>
           </v-row>
         </v-card-text>
@@ -84,7 +84,7 @@ export default {
     search: '',
     timeMenu: false,
     filter: {
-      hr_check: false,
+      is_check: false,
       department: '',
       category: [],
       called: [],
@@ -116,8 +116,8 @@ export default {
     filterData: function() {
       let temp = this.roomList
 
-      if (this.filter.hr_check) {
-        temp = temp.filter(r => r.hr_check == 0)
+      if (this.filter.is_check) {
+        temp = temp.filter(r => r.is_check == 0)
       }
 
       if (this.filter.department.length > 0) {

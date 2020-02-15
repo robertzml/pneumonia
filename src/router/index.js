@@ -11,6 +11,11 @@ const routes = [
     component: Home
   },
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/Login.vue')
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -49,6 +54,24 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.path == '/login') {
+    next()
+  } else {
+    let token = window.sessionStorage.getItem('token')
+    if (token == null) {
+      next({ path: '/login' })
+    } else {
+      let user = JSON.parse(token)
+      if (user.login) {
+        next()
+      } else {
+        next({ path: '/login' })
+      }
+    }
+  }
 })
 
 export default router

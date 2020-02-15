@@ -44,6 +44,15 @@
             <v-col cols="12" md="3" sm="6">
               <v-text-field label="居住人数" :value="$util.showReside(roomInfo.reside)" readonly></v-text-field>
             </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-text-field label="核对人" v-model="roomInfo.check_user" readonly></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-text-field label="核对时间" v-model="roomInfo.check_time" readonly></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-checkbox v-model="roomInfo.is_check" label="是否核对" readonly=""></v-checkbox>
+            </v-col>
             <v-col cols="12" md="12" sm="12">
               <v-text-field label="备注" v-model="roomInfo.remark" readonly></v-text-field>
             </v-col>

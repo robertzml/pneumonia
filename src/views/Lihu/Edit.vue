@@ -58,6 +58,12 @@
               <v-col cols="12" md="3" sm="6">
                 <v-text-field label="居住人数" v-model="roomInfo.reside" :rules="resideRules" hint="-1表示未知" persistent-hint></v-text-field>
               </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="核对人" v-model="userName" readonly></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-checkbox v-model="roomInfo.is_check" label="是否核对"></v-checkbox>
+              </v-col>
               <v-col cols="12" md="12" sm="12">
                 <v-text-field label="备注" v-model="roomInfo.remark"></v-text-field>
               </v-col>
@@ -76,7 +82,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 
 export default {
@@ -94,7 +100,8 @@ export default {
       departmentList: state => state.departmentList,
       id: state => state.lihu.roomId,
       refreshEvent: state => state.lihu.refreshEvent
-    })
+    }),
+    ...mapGetters(['userName'])
   },
   methods: {
     ...mapActions({
@@ -123,6 +130,10 @@ export default {
         })
 
         let vm = this
+
+        this.roomInfo.check_user = this.userName
+        this.roomInfo.is_check = this.roomInfo.is_check ? 1 : 0
+
         room.update(this.roomInfo).then(res => {
           if (res.success == 0) {
             vm.$store.commit('alertSuccess', '修改成功')

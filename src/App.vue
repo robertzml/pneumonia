@@ -9,9 +9,20 @@
         <span class="hidden-sm-and-down">校内居住人员情况</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-chip color="transparent">
+        {{ userName }}
+      </v-chip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" @click.stop="toHome">
+            <v-icon>home</v-icon>
+          </v-btn>
+        </template>
+        <span>主页</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" @click.stop="logoff">
             <v-icon>exit_to_app</v-icon>
           </v-btn>
         </template>
@@ -47,18 +58,22 @@ export default {
     drawer: true
   }),
   computed: {
-    ...mapGetters(['departmentList', 'userInfo', 'alertMessage'])
+    ...mapGetters(['departmentList', 'isLogin', 'userName', 'alertMessage'])
   },
   methods: {
-    ...mapActions(['initDepartment']),
+    ...mapActions(['initDepartment', 'logout']),
     ...mapMutations(['getToken', 'alertClose']),
     toHome() {
       // this.$store.dispatch('logout')
       this.$router.push({ name: 'Home' })
+    },
+    logoff() {
+      this.logout()
+      this.$router.push({ name: 'login' })
     }
   },
   mounted: function() {
-    // this.getToken()
+    this.getToken()
     this.initDepartment()
   }
 }

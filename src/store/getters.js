@@ -7,6 +7,10 @@ export default {
     return state.user
   },
 
+  userName: state => {
+    return state.user.userName
+  },
+
   // 提示消息
   alertMessage: state => {
     return state.alertMessage

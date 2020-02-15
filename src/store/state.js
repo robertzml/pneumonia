@@ -3,8 +3,7 @@ export default {
     login: false,
     id: '',
     userName: '',
-    name: '',
-    userGroupId: ''
+    name: ''
   },
 
   // 提示消息
