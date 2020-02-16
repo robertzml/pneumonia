@@ -44,6 +44,7 @@
         <v-card-title class="indigo darken-2">
           蠡湖家园
           <v-spacer></v-spacer>
+          <v-btn small text @click.stop="exportList">导出全部数据</v-btn>
           <v-btn text icon @click.stop="refresh"><v-icon>refresh</v-icon></v-btn>
         </v-card-title>
         <v-card-text class="px-0">
@@ -77,6 +78,10 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
+import FileSaver from 'file-saver'
+import Excel from 'exceljs'
+
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
 
 export default {
   name: 'LihuList',
@@ -165,6 +170,72 @@ export default {
 
     editItem(item) {
       this.showEdit(item.id)
+    },
+
+    exportList() {
+      let workbook = new Excel.Workbook()
+
+      let sheet = workbook.addWorksheet('蠡湖家园住户列表')
+
+      sheet.columns = [
+        { header: '门牌号', key: 'number', width: 10 },
+        { header: '住户', key: 'inhabitant', width: 10 },
+        { header: '部门', key: 'department', width: 18 },
+        { header: '电话', key: 'telephone', width: 12 },
+        { header: '分类', key: 'category', width: 15 },
+        { header: '联系情况', key: 'called', width: 12 },
+        { header: '当前位置', key: 'position', width: 10 },
+        { header: '备注', key: 'remark', width: 20 },
+        { header: '返回日期', key: 'return_date', width: 12 },
+        { header: '返回城市', key: 'return_city', width: 12 },
+        { header: '工号', key: 'staff_number', width: 12 },
+        { header: '人员性质', key: 'staff_type', width: 10 },
+        { header: '居住人数', key: 'reside', width: 5 },
+        { header: '通行证', key: 'passport', width: 12 },
+        { header: '是否领取通行证', key: 'get_passport', width: 5 },
+        { header: '车牌号', key: 'vehicle', width: 12 },
+        { header: '是否本人居住', key: 'is_self', width: 5 }
+      ]
+
+      this.roomList.forEach(item => {
+        let info = {
+          number: item.number,
+          inhabitant: item.inhabitant,
+          department: item.department,
+          telephone: item.telephone,
+          category: this.$util.category(item.category),
+          called: this.$util.callType(item.called),
+          position: item.position,
+          remark: item.remark,
+          return_date: item.return_date,
+          return_city: item.return_city,
+          staff_number: item.staff_number,
+          staff_type: this.$util.staffType(item.staff_type),
+          reside: item.reside == -1 ? '' : item.reside,
+          passport: item.passport,
+          get_passport: item.get_passport ? '是' : '否',
+          vehicle: item.vehicle,
+          is_self: item.is_self ? '是' : '否'
+        }
+
+        sheet.addRow(info)
+      })
+
+      sheet.eachRow(function(row) {
+        row.eachCell(function(cell) {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          }
+        })
+      })
+
+      workbook.xlsx.writeBuffer().then(data => {
+        const blob = new Blob([data], { type: EXCEL_TYPE })
+        FileSaver.saveAs(blob, '蠡湖家园住户列表.xlsx')
+      })
     }
   },
   mounted: function() {

@@ -51,7 +51,19 @@
               <v-text-field label="核对时间" v-model="roomInfo.check_time" readonly></v-text-field>
             </v-col>
             <v-col cols="12" md="3" sm="6">
-              <v-checkbox v-model="roomInfo.is_check" label="是否核对" readonly=""></v-checkbox>
+              <v-checkbox v-model="roomInfo.is_check" label="是否核对" readonly></v-checkbox>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-text-field label="车牌号" v-model="roomInfo.vehicle" readonly></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-text-field label="通行证" v-model="roomInfo.passport" readonly></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-checkbox v-model="roomInfo.get_passport" label="是否领取通行证" readonly></v-checkbox>
+            </v-col>
+            <v-col cols="12" md="3" sm="6">
+              <v-checkbox v-model="roomInfo.is_self" label="是否本人居住" readonly></v-checkbox>
             </v-col>
             <v-col cols="12" md="12" sm="12">
               <v-text-field label="备注" v-model="roomInfo.remark" readonly></v-text-field>

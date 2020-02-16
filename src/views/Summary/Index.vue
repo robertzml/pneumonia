@@ -108,7 +108,6 @@
 import { mapState } from 'vuex'
 import FileSaver from 'file-saver'
 import Excel from 'exceljs'
-//import ExcelJS from 'exceljs/dist/es5/exceljs.browser'
 import room from '@/controllers/room'
 
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'

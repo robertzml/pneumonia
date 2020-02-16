@@ -8,7 +8,8 @@ export default {
     { text: '房产科联系不上', value: 2 },
     { text: '学院了解', value: 3 },
     { text: '物业上门了解', value: 4 },
-    { text: '人力资源处了解', value: 5 }
+    { text: '人力资源处了解', value: 5 },
+    { text: '备案表获取', value: 6 }
   ],
 
   /**

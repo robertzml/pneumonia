@@ -133,6 +133,8 @@ export default {
 
         this.roomInfo.check_user = this.userName
         this.roomInfo.is_check = this.roomInfo.is_check ? 1 : 0
+        this.roomInfo.get_passport = 0
+        this.roomInfo.is_self = 1
 
         room.update(this.roomInfo).then(res => {
           if (res.success == 0) {

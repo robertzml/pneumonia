@@ -64,6 +64,18 @@
               <v-col cols="12" md="3" sm="6">
                 <v-checkbox v-model="roomInfo.is_check" label="是否核对"></v-checkbox>
               </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="车牌号" v-model="roomInfo.vehicle"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-text-field label="通行证" v-model="roomInfo.passport"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-checkbox v-model="roomInfo.get_passport" label="是否领取通行证"></v-checkbox>
+              </v-col>
+              <v-col cols="12" md="3" sm="6">
+                <v-checkbox v-model="roomInfo.is_self" label="是否本人居住"></v-checkbox>
+              </v-col>
               <v-col cols="12" md="12" sm="12">
                 <v-text-field label="备注" v-model="roomInfo.remark"></v-text-field>
               </v-col>
@@ -133,6 +145,8 @@ export default {
 
         this.roomInfo.check_user = this.userName
         this.roomInfo.is_check = this.roomInfo.is_check ? 1 : 0
+        this.roomInfo.get_passport = this.roomInfo.get_passport ? 1 : 0
+        this.roomInfo.is_self = this.roomInfo.is_self ? 1 : 0
 
         room.update(this.roomInfo).then(res => {
           if (res.success == 0) {
