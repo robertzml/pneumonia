@@ -32,7 +32,16 @@
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-checkbox v-model="filter.is_check" label="是否非核对" hide-details></v-checkbox>
+              <v-text-field
+                v-model="filter.pattern"
+                append-icon="filter"
+                label="返回城市过滤"
+                clearable
+                single-line
+                hint="如:湖南|安徽|河南"
+                persistent-hint
+              >
+              </v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -94,7 +103,8 @@ export default {
       category: [],
       called: [],
       time: null,
-      text: ''
+      text: '',
+      pattern: ''
     },
     headers: [
       { text: '门牌号', value: 'number' },
@@ -121,8 +131,15 @@ export default {
     filterData: function() {
       let temp = this.roomList
 
+      /*
       if (this.filter.is_check) {
         temp = temp.filter(r => r.is_check == 0)
+      }
+      */
+
+      if (this.filter.pattern) {
+        const pattern = eval('/' + this.filter.pattern + '/gi')
+        temp = temp.filter(r => r.return_city.search(pattern) > -1)
       }
 
       if (this.filter.department.length > 0) {
@@ -194,7 +211,8 @@ export default {
         { header: '通行证', key: 'passport', width: 12 },
         { header: '是否领取通行证', key: 'get_passport', width: 5 },
         { header: '车牌号', key: 'vehicle', width: 12 },
-        { header: '是否本人居住', key: 'is_self', width: 5 }
+        { header: '是否本人居住', key: 'is_self', width: 5 },
+        { header: '是否核对', key: 'is_check', width: 5 }
       ]
 
       this.roomList.forEach(item => {
@@ -215,7 +233,8 @@ export default {
           passport: item.passport,
           get_passport: item.get_passport ? '是' : '否',
           vehicle: item.vehicle,
-          is_self: item.is_self ? '是' : '否'
+          is_self: item.is_self ? '是' : '否',
+          is_check: item.is_check ? '是' : '否'
         }
 
         sheet.addRow(info)

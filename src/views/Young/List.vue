@@ -32,7 +32,16 @@
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-checkbox v-model="filter.is_check" label="是否非核对" hide-details></v-checkbox>
+              <v-text-field
+                v-model="filter.pattern"
+                append-icon="filter"
+                label="返回城市过滤"
+                clearable
+                single-line
+                hint="如:湖南|安徽|河南"
+                persistent-hint
+              >
+              </v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -44,6 +53,7 @@
         <v-card-title class="pink darken-4">
           青教公寓
           <v-spacer></v-spacer>
+          <v-btn small text @click.stop="exportList">导出全部数据</v-btn>
           <v-btn text icon @click.stop="refresh"><v-icon>refresh</v-icon></v-btn>
         </v-card-title>
         <v-card-text class="px-0">
@@ -77,6 +87,10 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
+import FileSaver from 'file-saver'
+import Excel from 'exceljs'
+
+const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
 
 export default {
   name: 'YoungList',
@@ -89,7 +103,8 @@ export default {
       category: [],
       called: [],
       time: null,
-      text: ''
+      text: '',
+      pattern: ''
     },
     headers: [
       { text: '门牌号', value: 'number' },
@@ -116,8 +131,14 @@ export default {
     filterData: function() {
       let temp = this.roomList
 
+      /*
       if (this.filter.is_check) {
         temp = temp.filter(r => r.is_check == 0)
+      }
+      */
+      if (this.filter.pattern) {
+        const pattern = eval('/' + this.filter.pattern + '/gi')
+        temp = temp.filter(r => r.return_city.search(pattern) > -1)
       }
 
       if (this.filter.department.length > 0) {
@@ -165,6 +186,66 @@ export default {
 
     editItem(item) {
       this.showEdit(item.id)
+    },
+
+    exportList() {
+      let workbook = new Excel.Workbook()
+
+      let sheet = workbook.addWorksheet('青教公寓住户列表')
+
+      sheet.columns = [
+        { header: '门牌号', key: 'number', width: 10 },
+        { header: '住户', key: 'inhabitant', width: 10 },
+        { header: '部门', key: 'department', width: 18 },
+        { header: '电话', key: 'telephone', width: 12 },
+        { header: '分类', key: 'category', width: 15 },
+        { header: '联系情况', key: 'called', width: 12 },
+        { header: '当前位置', key: 'position', width: 10 },
+        { header: '备注', key: 'remark', width: 20 },
+        { header: '返回日期', key: 'return_date', width: 12 },
+        { header: '返回城市', key: 'return_city', width: 12 },
+        { header: '工号', key: 'staff_number', width: 12 },
+        { header: '人员性质', key: 'staff_type', width: 10 },
+        { header: '居住人数', key: 'reside', width: 5 },
+        { header: '是否核对', key: 'is_check', width: 5 }
+      ]
+
+      this.roomList.forEach(item => {
+        let info = {
+          number: item.number,
+          inhabitant: item.inhabitant,
+          department: item.department,
+          telephone: item.telephone,
+          category: this.$util.category(item.category),
+          called: this.$util.callType(item.called),
+          position: item.position,
+          remark: item.remark,
+          return_date: item.return_date,
+          return_city: item.return_city,
+          staff_number: item.staff_number,
+          staff_type: this.$util.staffType(item.staff_type),
+          reside: item.reside == -1 ? '' : item.reside,
+          is_check: item.is_check ? '是' : '否'
+        }
+
+        sheet.addRow(info)
+      })
+
+      sheet.eachRow(function(row) {
+        row.eachCell(function(cell) {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          }
+        })
+      })
+
+      workbook.xlsx.writeBuffer().then(data => {
+        const blob = new Blob([data], { type: EXCEL_TYPE })
+        FileSaver.saveAs(blob, '青教公寓住户列表.xlsx')
+      })
     }
   },
   mounted: function() {
