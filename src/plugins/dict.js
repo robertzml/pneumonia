@@ -24,7 +24,8 @@ export default {
     { text: '已过观察期人员', value: 5 },
     { text: '疫区未归人员', value: 6 },
     { text: '其它省市未归人员', value: 7 },
-    { text: '未联系上', value: 8 }
+    { text: '未联系上', value: 8 },
+    { text: '国外未回校', value: 9 }
   ],
 
   staffType: [
