@@ -61,9 +61,27 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showRelationCreate">添加家属</v-btn>
           <v-btn color="warning" @click="showCreateRecord">添加日志</v-btn>
           <v-btn color="success" @click="showList">返回</v-btn>
         </v-card-actions>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12">
+      <v-card>
+        <v-subheader>家属情况</v-subheader>
+        <v-data-table :headers="relationHeaders" :items="relationItems" hide-default-footer disable-pagination>
+          <template v-slot:item.category="{ item }">
+            {{ item.category | category }}
+          </template>
+          <template v-slot:item.action="{ item }">
+            <v-btn small color="warning" class="ml-2" @click="editItem(item)">
+              <v-icon left dark>edit</v-icon>
+              编辑
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-card>
     </v-col>
 
@@ -75,6 +93,8 @@
     </v-col>
 
     <record-create ref="recordMod" @close="loadRecords"></record-create>
+
+    <relation-edit ref="relationMod" @close="loadRelations"></relation-edit>
   </v-row>
 </template>
 
@@ -82,11 +102,13 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import room from '@/controllers/room'
 import RecordCreate from '../Record/Create'
+import RelationEdit from '../Relation/Edit'
 
 export default {
   name: 'YoungDetails',
   components: {
-    RecordCreate
+    RecordCreate,
+    RelationEdit
   },
   data: () => ({
     roomInfo: {},
@@ -96,7 +118,18 @@ export default {
       { text: '日期', value: 'record_date' },
       { text: '信息', value: 'info' }
     ],
-    recordItems: []
+    recordItems: [],
+    relationHeaders: [
+      { text: '住户', value: 'inhabitant' },
+      { text: '电话', value: 'telephone' },
+      { text: '分类', value: 'category' },
+      { text: '当前位置', value: 'position' },
+      { text: '返回日期', value: 'return_date' },
+      { text: '返回城市', value: 'return_city' },
+      { text: '家属关系', value: 'relation_type' },
+      { text: '操作', value: 'action' }
+    ],
+    relationItems: []
   }),
   computed: {
     ...mapState({
@@ -120,6 +153,8 @@ export default {
         if (this.roomInfo.hr_check == 0) {
           this.roomInfo.department = ''
         }
+
+        this.loadRelations()
       } else {
         this.roomInfo = {}
       }
@@ -134,8 +169,25 @@ export default {
       }
     },
 
+    async loadRelations() {
+      if (this.roomInfo.number) {
+        let items = await room.loadRelations()
+        this.relationItems = items.filter(r => r.number == this.roomInfo.number)
+      } else {
+        this.relationItems = []
+      }
+    },
+
     showCreateRecord() {
       this.$refs.recordMod.init(this.roomInfo)
+    },
+
+    showRelationCreate() {
+      this.$refs.relationMod.init(0)
+    },
+
+    editItem(item) {
+      this.$refs.relationMod.init(item.id)
     }
   },
   activated: function() {

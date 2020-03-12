@@ -26,5 +26,25 @@ export default {
   async loadRecords() {
     const res = await axios._get({ url: '/records' })
     return res.data
+  },
+
+  async insertRelation(entity) {
+    const res = await axios._post({ url: '/insertRelation', data: entity })
+    return res.data
+  },
+
+  async updateRelation(entity) {
+    const res = await axios._post({ url: '/updateRelation', data: entity })
+    return res.data
+  },
+
+  async loadRelations() {
+    const res = await axios._get({ url: '/relations' })
+    return res.data
+  },
+
+  async getRelation(id) {
+    const res = await axios._get({ url: '/relations', params: { id: id } })
+    return res.data[0]
   }
 }
