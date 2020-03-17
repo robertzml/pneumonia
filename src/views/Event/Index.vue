@@ -2,7 +2,7 @@
   <v-sheet class="transparent">
     <v-row dense>
       <v-col cols="12">
-        <v-alert type="info">
+        <v-alert type="info" dismissible>
           <ol>
             <li>已返校户数:计算当前位置在蠡湖家园或青教，且无返回日期，或返回日期早于等于日报日期.</li>
             <li>今日返校:计算当前位置在蠡湖家园或青教.</li>
@@ -260,8 +260,9 @@ export default {
       this.makeApartment('蠡湖家园总户数', '蠡湖家园', 1, this.eventDate)
       this.makeApartment('青教公寓总户数', '青教', 2, this.eventDate)
       this.makeFocus('涉湖北户数', /湖北/gi, this.eventDate)
-      this.makeFocus('涉温州户数', /温州/gi, this.eventDate)
       this.makeFocus('涉疫区户数', /湖南|河南|浙江|安徽|广东|江西/gi, this.eventDate)
+      this.makeFocus('涉淮安户数', /淮安/gi, this.eventDate)
+      this.makeFocus('涉境外户数', /境外/gi, this.eventDate)
       // this.makeFocus('涉江西户数', /江西/gi, this.eventDate)
     },
 
@@ -288,10 +289,12 @@ export default {
             this.detailsApartment('青教', 2, this.eventDate)
           } else if (sel.category == '涉湖北户数') {
             this.detailsFocus(/湖北/gi, this.eventDate)
-          } else if (sel.category == '涉温州户数') {
-            this.detailsFocus(/温州/gi, this.eventDate)
           } else if (sel.category == '涉疫区户数') {
             this.detailsFocus(/湖南|河南|浙江|安徽|广东|江西/gi, this.eventDate)
+          } else if (sel.category == '涉淮安户数') {
+            this.detailsFocus(/淮安/gi, this.eventDate)
+          } else if (sel.category == '涉境外户数') {
+            this.detailsFocus(/境外/gi, this.eventDate)
           }
         }
       }
@@ -380,7 +383,7 @@ export default {
       let record = {}
       const current = val
 
-      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1 && (r.category == 3 || r.category == 5))
+      let rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1)
       record.category = title
       record.total = rooms.length
       record.return_amount = 0
@@ -520,7 +523,7 @@ export default {
     detailsFocus(pattern, val) {
       const current = val
 
-      const rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1 && (r.category == 3 || r.category == 5))
+      const rooms = this.roomList.filter(r => r.return_city && r.return_city.search(pattern) > -1)
 
       rooms.forEach(item => {
         // 总户数

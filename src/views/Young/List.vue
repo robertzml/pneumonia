@@ -54,6 +54,7 @@
           青教公寓
           <v-spacer></v-spacer>
           <v-btn small text @click.stop="exportList">导出全部数据</v-btn>
+          <v-btn small text @click.stop="exportRelation">导出家属数据</v-btn>
           <v-btn text icon @click.stop="refresh"><v-icon>refresh</v-icon></v-btn>
         </v-card-title>
         <v-card-text class="px-0">
@@ -245,6 +246,63 @@ export default {
       workbook.xlsx.writeBuffer().then(data => {
         const blob = new Blob([data], { type: EXCEL_TYPE })
         FileSaver.saveAs(blob, '青教公寓住户列表.xlsx')
+      })
+    },
+
+    // 导出家属
+    async exportRelation() {
+      const relations = await room.loadRelations()
+
+      let workbook = new Excel.Workbook()
+
+      let sheet = workbook.addWorksheet('青教公寓住户列表')
+
+      sheet.columns = [
+        { header: '门牌号', key: 'number', width: 10 },
+        { header: '住户', key: 'inhabitant', width: 10 },
+        { header: '电话', key: 'telephone', width: 12 },
+        { header: '分类', key: 'category', width: 15 },
+        { header: '关系', key: 'relation', width: 12 },
+        { header: '当前位置', key: 'position', width: 10 },
+        { header: '备注', key: 'remark', width: 20 },
+        { header: '返回日期', key: 'return_date', width: 12 },
+        { header: '返回城市', key: 'return_city', width: 12 },
+        { header: '身份证号', key: 'identity_card', width: 16 },
+        { header: '工号', key: 'staff_number', width: 12 }
+      ]
+
+      relations.forEach(item => {
+        let info = {
+          number: item.number,
+          inhabitant: item.inhabitant,
+          telephone: item.telephone,
+          category: this.$util.category(item.category),
+          relation: item.relation_type,
+          position: item.position,
+          remark: item.remark,
+          return_date: item.return_date,
+          return_city: item.return_city,
+          identity_card: item.identity_card,
+          staff_number: item.staff_number
+        }
+
+        sheet.addRow(info)
+      })
+
+      sheet.eachRow(function(row) {
+        row.eachCell(function(cell) {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          }
+        })
+      })
+
+      workbook.xlsx.writeBuffer().then(data => {
+        const blob = new Blob([data], { type: EXCEL_TYPE })
+        FileSaver.saveAs(blob, '青教公寓家属列表.xlsx')
       })
     }
   },
