@@ -44,7 +44,7 @@ export default {
   },
 
   async getRelation(id) {
-    const res = await axios._get({ url: '/relations', params: { id: id } })
+    const res = await axios._get({ url: '/getRelation', params: { id: id } })
     return res.data[0]
   }
 }
